@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    # These should improve speed for integration tests. See https://www.postgresql.org/docs/current/non-durability.html
+    command: |-
+      -c 'shared_buffers=128MB'
+      -c 'fsync=off'
+      -c 'synchronous_commit=off'
+      -c 'full_page_writes=off'
+      -c 'max_connections=500'
+      -c 'client_min_messages=warning'
+      -c 'checkpoint_timeout=86400'
+      -c 'max_wal_size=5GB'
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - database_data:/var/lib/pg/data
+
+volumes:
+  database_data:
+    driver: local
+    driver_opts:
+      type: "tmpfs"
+      device: "tmpfs"

@@ -8,11 +8,15 @@ import koaLogger from 'koa-logger';
 import userRouter from './user/router.ts';
 import settings from './settings.ts';
 import errorHandling from './error-handling';
+import type { AppState, AppContext } from './koa-ctx.ts';
+import initServices from './services';
 
 const logger = createSubLogger('app');
 
-const app = new Koa();
+const app = new Koa<AppState, AppContext>();
 const router = new Router();
+
+initServices(app);
 
 app.use(
   koaLogger({

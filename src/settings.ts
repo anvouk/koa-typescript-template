@@ -14,12 +14,14 @@ const Settings = z
   .object({
     LOG_LEVEL: PinoLevel.optional().default('info'),
     SERVER_PORT: z.number().optional().default(9000),
+    POSTGRES_CONN_STR: z.string().optional().default('postgresql://postgres:mypassword@localhost:5432/postgres'),
   })
   .readonly();
 
 const settings = Settings.safeParse({
   LOG_LEVEL: process.env.LOG_LEVEL,
   SERVER_PORT: process.env.SERVER_PORT,
+  POSTGRES_CONN_STR: process.env.POSTGRES_CONN_STR,
 });
 
 if (!settings.success) {
