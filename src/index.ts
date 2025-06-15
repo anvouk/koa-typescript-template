@@ -40,9 +40,7 @@ app.use(cors());
 app.use(bodyParser());
 app.use(router.routes()).use(router.allowedMethods());
 
-app.on('error', (err) => {
-  logger.error(err, 'unhandled error');
-});
+app.on('error', errorHandling);
 
 logger.info(`listening at http://localhost:${settings.SERVER_PORT}`);
 const server = http.createServer(app.callback()).listen(settings.SERVER_PORT);

@@ -53,17 +53,32 @@ export function generateProblemDetails(
 }
 
 export function generateValidationProblemDetail(
+  error: Error,
+  title?: string,
+  detail?: string,
+  instance?: string,
+): ValidationProblemDetails {
+  return {
+    type: problemDetailsMappings[422]!.type,
+    title: title ?? 'Validation error',
+    detail: detail ?? error.message,
+    instance: instance,
+    status: 422,
+  };
+}
+
+export function generateZodValidationProblemDetail(
   error: z.ZodError,
   title?: string,
   detail?: string,
   instance?: string,
 ): ValidationProblemDetails {
   return {
-    type: problemDetailsMappings[400]!.type,
+    type: problemDetailsMappings[422]!.type,
     title: title ?? 'Validation error',
     detail: detail,
     instance: instance,
-    status: 400,
+    status: 422,
     issues: process.env.NODE_ENV !== 'production' ? error.issues : undefined,
   };
 }

@@ -1,14 +1,26 @@
 import type { Context } from 'koa';
 import { createSubLogger } from '../logger.ts';
-import { generateProblemDetails, generateValidationProblemDetail } from './problem-details.ts';
+import {
+  generateProblemDetails,
+  generateValidationProblemDetail,
+  generateZodValidationProblemDetail,
+} from './problem-details.ts';
 import z from 'zod/v4';
 
 const logger = createSubLogger('error-handling');
 
-export default async (err: any, ctx: Context) => {
-  if ((err as z.ZodError).issues !== undefined) {
+async function errorHandling(err: any, ctx: Context) {
+  // generated on invalid payload format received
+  if (err instanceof SyntaxError) {
     const problemDetail = generateValidationProblemDetail(err, undefined, undefined, ctx.req.url);
-    ctx.status = problemDetail.status || 400;
+    ctx.status = problemDetail.status || 422;
+    ctx.body = problemDetail;
+    return;
+  }
+  // generated zod validation error
+  if ((err as z.ZodError).issues !== undefined) {
+    const problemDetail = generateZodValidationProblemDetail(err, undefined, undefined, ctx.req.url);
+    ctx.status = problemDetail.status || 422;
     ctx.body = problemDetail;
     return;
   }
@@ -21,4 +33,6 @@ export default async (err: any, ctx: Context) => {
   const problemDetail = generateProblemDetails(statusCode, undefined, errorMsg, ctx.req.url);
   ctx.status = statusCode;
   ctx.body = problemDetail;
-};
+}
+
+export default errorHandling;
