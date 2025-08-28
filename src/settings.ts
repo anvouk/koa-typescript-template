@@ -13,7 +13,7 @@ const PinoLevel = z.custom<pino.Level>((val) => {
 const Settings = z
   .object({
     LOG_LEVEL: PinoLevel.optional().default('info'),
-    SERVER_PORT: z.number().optional().default(9000),
+    SERVER_PORT: z.coerce.number().optional().default(9000),
     POSTGRES_CONN_STR: z.string().optional().default('postgresql://postgres:mypassword@localhost:5432/postgres'),
   })
   .readonly();
